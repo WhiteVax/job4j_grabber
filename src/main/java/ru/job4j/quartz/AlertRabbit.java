@@ -3,9 +3,7 @@ package ru.job4j.quartz;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 import static org.quartz.JobBuilder.*;
@@ -15,7 +13,7 @@ import static org.quartz.SimpleScheduleBuilder.*;
 public class AlertRabbit {
     public static void main(String[] args) {
         try {
-            var path = "./src/main/resources/rabbit.properties";
+            var path = "rabbit.properties";
             var scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             var job = newJob(Rabbit.class).build();
@@ -42,11 +40,10 @@ public class AlertRabbit {
 
     public static Properties getProperties(String path) {
         Properties rsl = new Properties();
-        try (var reader = new BufferedReader(new FileReader(path))) {
-            rsl.load(reader);
-            reader.lines().forEach(System.out::println);
+        try (var in = AlertRabbit.class.getClassLoader().getResourceAsStream(path)) {
+            rsl.load(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(e);
         }
         return rsl;
     }
