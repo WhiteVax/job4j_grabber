@@ -54,16 +54,15 @@ public class AlertRabbit {
         @Override
         public void execute(JobExecutionContext context) {
             System.out.println("Rabbit runs here ...");
-            try (var connection = (Connection) context.getJobDetail().getJobDataMap().get("connection")) {
+            var connection = (Connection) context.getJobDetail().getJobDataMap().get("connection");
                 try (var statement = connection.prepareStatement(
                         "INSERT INTO grabber(created_date) VALUES (now())")) {
                     statement.execute();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
         }
-    }
 
     public static Properties getProperties(String path) {
         Properties rsl = new Properties();
