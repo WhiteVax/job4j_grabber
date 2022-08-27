@@ -25,7 +25,9 @@ public class HabrCareerParse implements DateTimeParser {
                 var vacancyName = titleElement.text();
                 var link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
                 var date = habr.parse(row.select(".basic-date").attr("datetime"));
+                var description = habr.retrieveDescription(link);
                 System.out.printf("%s %s %s%n", vacancyName, date, link);
+                System.out.println(description);
             });
         }
     }
@@ -33,6 +35,18 @@ public class HabrCareerParse implements DateTimeParser {
     @Override
     public  LocalDateTime parse(String parse) {
         return  LocalDateTime.parse(parse.substring(0, 19));
+    }
+
+    private String retrieveDescription(String link) {
+        var description = "";
+        var connection = Jsoup.connect(link);
+        try {
+            var document = connection.get();
+            description = document.select(".style-ugc").text();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return description;
     }
 }
 
