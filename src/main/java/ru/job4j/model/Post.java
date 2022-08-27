@@ -18,6 +18,13 @@ public class Post {
         this.created = created;
     }
 
+    public Post(String title, String link, String description, LocalDateTime created) {
+        this.title = title;
+        this.link = link;
+        this.description = description;
+        this.created = created;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -47,16 +54,16 @@ public class Post {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Post)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Post post = (Post) o;
-        return getLink().equals(post.getLink()) && getDescription().equals(post.getDescription());
+        return getId() == post.getId() && getLink().equals(post.getLink());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLink(), getDescription());
+        return Objects.hash(getId(), getLink());
     }
 
     @Override
