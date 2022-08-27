@@ -1,12 +1,11 @@
 package ru.job4j.parse;
 
 import org.jsoup.Jsoup;
-import ru.job4j.grabber.utils.DateTimeParser;
+import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-public class HabrCareerParse implements DateTimeParser {
+public class HabrCareerParse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
 
@@ -14,6 +13,7 @@ public class HabrCareerParse implements DateTimeParser {
 
     public static void main(String[] args) throws IOException {
         var habr = new HabrCareerParse();
+        var dateParse = new HabrCareerDateTimeParser();
         for (int i = 1; i <= 5; i++) {
             var connection = Jsoup.connect(String.format("%s%d", PAGE_LINK, i));
             var document = connection.get();
@@ -24,17 +24,12 @@ public class HabrCareerParse implements DateTimeParser {
                 var linkElement = titleElement.child(0);
                 var vacancyName = titleElement.text();
                 var link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
-                var date = habr.parse(row.select(".basic-date").attr("datetime"));
+                var date = dateParse.parse(row.select(".basic-date").attr("datetime"));
                 var description = habr.retrieveDescription(link);
                 System.out.printf("%s %s %s%n", vacancyName, date, link);
                 System.out.println(description);
             });
         }
-    }
-
-    @Override
-    public  LocalDateTime parse(String parse) {
-        return  LocalDateTime.parse(parse.substring(0, 19));
     }
 
     private String retrieveDescription(String link) {
