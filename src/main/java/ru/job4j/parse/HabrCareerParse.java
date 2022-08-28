@@ -43,8 +43,8 @@ public class HabrCareerParse implements Parse {
     public List<Post> list(String link) throws IOException {
         var dateParse = new HabrCareerDateTimeParser();
         List<Post> vacancies = new ArrayList<>();
-        int PAGES = 5;
-        for (int i = 1; i <= PAGES; i++) {
+        int pages = 5;
+        for (int i = 1; i <= pages; i++) {
             var connection = Jsoup.connect(String.format("%s%d", PAGE_LINK, i));
             var document = connection.get();
             var rows = document.select(".vacancy-card__inner");
