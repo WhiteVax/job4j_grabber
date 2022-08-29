@@ -28,14 +28,14 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public void save(Post post) {
         try (var statement = connection.prepareStatement(
-                "INSERT INTO post(name, link, description, created) VALUES (?, ?, ?, ?)")) {
+                "INSERT INTO post(name, link, description, created) VALUES (?, ?, ?, ?) ON CONFLICT(link) DO NOTHING")) {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getLink());
             statement.setString(3, post.getDescription());
             statement.setTimestamp(4, Timestamp.valueOf(post.getCreated()));
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -49,7 +49,7 @@ public class PsqlStore implements Store, AutoCloseable {
                 posts.add(getPost(set));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return posts;
     }
@@ -64,16 +64,16 @@ public class PsqlStore implements Store, AutoCloseable {
 
     @Override
     public Post findById(int id) {
-        Post post;
+        Post post = null;
         try (var statement = connection.prepareStatement(
                 "SELECT * FROM post WHERE id = ?")) {
             statement.setInt(1, id);
             var set = statement.executeQuery();
-            set.next();
-            post = getPost(set);
-
+            if(set.next()) {
+                post = getPost(set);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return post;
     }
