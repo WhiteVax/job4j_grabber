@@ -69,7 +69,7 @@ public class PsqlStore implements Store, AutoCloseable {
                 "SELECT * FROM post WHERE id = ?")) {
             statement.setInt(1, id);
             var set = statement.executeQuery();
-            if(set.next()) {
+            if (set.next()) {
                 post = getPost(set);
             }
         } catch (SQLException e) {
