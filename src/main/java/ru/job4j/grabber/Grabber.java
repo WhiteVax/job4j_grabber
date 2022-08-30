@@ -80,7 +80,6 @@ public class Grabber implements Grab {
             try {
                 posts = parse.list(LINK);
             } catch (IOException e) {
-                e.printStackTrace();
                 LOG.error("Exception in log.", e);
             }
             for (var post : posts) {
@@ -101,12 +100,10 @@ public class Grabber implements Grab {
                             out.write(System.lineSeparator().getBytes());
                         }
                     } catch (IOException io) {
-                        io.printStackTrace();
                         LOG.error("Exception in log.", io);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 LOG.error("Exception in log.", e);
             }
         }).start();
