@@ -2,6 +2,8 @@ package ru.job4j.grabber;
 
 import ru.job4j.model.Post;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,6 +15,8 @@ public class PsqlStore implements Store, AutoCloseable {
 
     private Connection connection;
 
+    private static final Logger LOG = LoggerFactory.getLogger(PsqlStore.class.getName());
+
     public PsqlStore(Properties cfg) {
         try {
             Class.forName(cfg.getProperty("rabbit.driver"));
@@ -21,7 +25,7 @@ public class PsqlStore implements Store, AutoCloseable {
                     cfg.getProperty("rabbit.username"),
                     cfg.getProperty("rabbit.password"));
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            LOG.error(e.getMessage());
         }
     }
 
@@ -36,6 +40,7 @@ public class PsqlStore implements Store, AutoCloseable {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Exception in log.", e);
         }
     }
 
@@ -50,6 +55,7 @@ public class PsqlStore implements Store, AutoCloseable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Exception in log.", e);
         }
         return posts;
     }
@@ -74,6 +80,7 @@ public class PsqlStore implements Store, AutoCloseable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Exception in log.", e);
         }
         return post;
     }
@@ -100,10 +107,10 @@ public class PsqlStore implements Store, AutoCloseable {
                 store.getAll().forEach(System.out::println);
                 System.out.println(store.findById(1).toString());
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                LOG.error(e.getMessage());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOG.error(e.getMessage());
         }
     }
 }
